@@ -14,10 +14,12 @@
 
   
 2. Configuring Solr
-  solr folder contains only schema.xml file. It contains settings for performing indexing of test documents.
-  Default techproducts core of solr used for test purposes. Dowload solr 5.3.0 and perform setup. Use http://lucene.apache.org/solr/quickstart.html 
+  solr folder contains settings for performing indexing of test documents and libs to enable cross-domain POST requests.
+  Default techproducts core of solr used for test purposes. Download solr 5.3.0 and perform setup. Use http://lucene.apache.org/solr/quickstart.html 
   as reference. After that replace schema.xml in
-  \solr-5.3.0\server\solr\configsets\sample_techproducts_configs\conf with solr folder file.
+  \solr-5.3.0\server\solr\configsets\sample_techproducts_configs\conf with solr\schema.xml file.
+  Copy solr\server to \solr-5.3.0 with replacement of web.xml.
+  
   To run solr use bin/solr start -e techproducts command.
 
 3. Database
