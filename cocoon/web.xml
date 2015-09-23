@@ -1,0 +1,725 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><!--+
+    | This is the Cocoon web-app configurations file
+    +--><!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+
+  <listener>
+    <!--
+      - JavaServer Faces configuration loader. For Sun's RI implementation use
+      - com.sun.faces.config.ConfigureListener class.
+      -->
+    <listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
+  </listener>
+
+
+
+  <!-- Context Configuration ========================================== -->
+
+  <!--+
+      | Set a context property useful to allow you to ProxyPass your
+      | web application mounted to a different URI without loosing the
+      | ability to do cookie-based sessions.
+      | WARNING: this is Jetty specific!
+      +-->
+  <!--context-param>
+    <param-name>org.mortbay.jetty.servlet.SessionPath</param-name>
+    <param-value>/some/path/to/your/webapp</param-value>
+    <description>An override of the session cookie path</description>
+   </context-param-->
+
+  <!-- Servlet Configuration ========================================== -->
+
+  <servlet>
+    <servlet-name>Cocoon</servlet-name>
+    <display-name>Cocoon</display-name>
+    <description>Cocoon</description>
+
+    <!--
+      The regular servlet class (trusts the servlet container classloader)
+      -->
+    <servlet-class>org.apache.cocoon.servlet.CocoonServlet</servlet-class>
+
+    <!--
+      This parameter tells cocoon to set the thread's context classloader to
+      its own classloader. If you experience strange classloader issues,
+      try setting this parameter to "true" or using ParanoidCocoonServlet.
+    -->
+    <init-param>
+      <param-name>init-classloader</param-name>
+      <param-value>false</param-value>
+    </init-param>
+
+    <!--
+      This parameter allows to set system properties
+    -->
+    <!--
+    <init-param>
+      <param-name>force-property</param-name>
+      <param-value>
+        org.apache.commons.logging.Log=org.apache.commons.logging.impl.LogKitLogger
+      </param-value>
+    </init-param>
+    -->
+
+    <!--
+      This parameter points to the main configuration file for Cocoon.
+      Note that the path is specified in absolute notation but it will be
+      resolved relative to the servlets webapp context path
+    -->
+    <init-param>
+      <param-name>configurations</param-name>
+      <param-value>/WEB-INF/cocoon.xconf</param-value>
+    </init-param>
+
+    <!--
+      This parameter indicates the configuration file of the LogKit management
+    -->
+    <init-param>
+      <param-name>logkit-config</param-name>
+      <param-value>/WEB-INF/logkit.xconf</param-value>
+    </init-param>
+
+    <!--
+      This parameter indicates the category id of the logger from the LogKit
+      configuration used by the CocoonServlet.
+    -->
+    <init-param>
+      <param-name>servlet-logger</param-name>
+      <param-value>access</param-value>
+    </init-param>
+
+    <!--
+      This parameter indicates the category id of the logger from the LogKit
+      management configuration for the Cocoon engine.
+      This logger is used for all components described in the cocoon.xconf
+      and sitemap.xmap file not having specified a logger with the
+      logger="..." attribute in the component configuration file.
+    -->
+    <init-param>
+      <param-name>cocoon-logger</param-name>
+      <param-value>core</param-value>
+    </init-param>
+
+    <!--
+      This parameter indicates the log level to use throughout startup of the
+      system. As soon as the logkit.xconf the setting of the logkit.xconf
+      configuration is used instead! Only for startup and if the logkit.xconf is
+      not readable/available this log level is of importance.
+
+      Available levels are:
+        DEBUG:        prints all level of log messages.
+        INFO:         prints all level of log messages except DEBUG ones.
+        WARN:         prints all level of log messages except DEBUG and INFO ones.
+        ERROR:        prints all level of log messages except DEBUG, INFO and WARN ones.
+        FATAL_ERROR:  prints only log messages of this level
+    -->
+    <init-param>
+      <param-name>log-level</param-name>
+      <param-value>WARN</param-value>
+    </init-param>
+
+    <!--
+      The forbidden level for deprectation messages. DEBUG forbids all deprecations (strict mode)
+      and FATAL_ERROR allows all (tolerant mode). Default is ERROR, allowing up to WARN.
+      See org.apache.util.Deprecation for more details.
+    -->
+    <init-param>
+      <param-name>forbidden-deprecation-level</param-name>
+      <param-value>ERROR</param-value>
+    </init-param>
+
+    <!--
+      This parameter switches the logging system from LogKit to Log4J for Cocoon.
+      Log4J has to be configured already.
+      <init-param>
+        <param-name>logger-class</param-name>
+        <param-value>org.apache.avalon.excalibur.logger.Log4JLoggerManager</param-value>
+      </init-param>
+    -->
+
+    <!--
+      If you want to configure log4j using Cocoon, then you can define
+      an XML configuration file here. You can use the usual log4j property
+      substituation mechanism, e.g. ${context-root} is replaced by the
+      context root of this web application etc.
+      You can configure the log4j configuration even if you use LogKit
+      for Cocoon logging. You can use this to configure third party code
+      for example.
+      <init-param>
+        <param-name>log4j-config</param-name>
+        <param-value>/WEB-INF/log4j.xconf</param-value>
+      </init-param>
+    -->
+
+    <!--
+      Allow reinstantiating (reloading) of the cocoon instance. If this is
+      set to "yes" or "true", a new cocoon instance can be created using
+      the request parameter "cocoon-reload". It also enables that Cocoon is
+      reloaded when cocoon.xconf changes. Default is no for security reasons.
+    -->
+    <init-param>
+      <param-name>allow-reload</param-name>
+      <param-value>no</param-value>
+    </init-param>
+
+    <!--
+      This parameter is used to list classes that should be loaded at
+      initialization time of the servlet. For example, JDBC Drivers used need to
+      be named here. Additional entries may be inserted here during build
+      depending on your build properties.
+    -->
+    <init-param>
+      <param-name>load-class</param-name>
+      <param-value>
+        <!-- For parent ComponentManager sample:
+        org.apache.cocoon.samples.parentcm.Configurator -->
+        <!-- For IBM WebSphere:
+        com.ibm.servlet.classloader.Handler -->
+      
+        <!-- For Database Driver:
+        org.hsqldb.jdbcDriver  -->
+		com.mysql.jdbc.Driver
+
+		</param-value>
+    </init-param>
+
+    <!--
+      Causes all files in multipart requests to be processed.
+      Default is true but the maximum allowed size is kept small for security reasons.
+      Unsupported values will be interpreted as false.
+    -->
+    <init-param>
+      <param-name>enable-uploads</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!--
+      This parameter allows to specify where Cocoon should put uploaded files.
+      The path specified can be either absolute or relative to the context
+      path of the servlet. On windows platform, absolute directory must start
+      with volume: C:\Path\To\Upload\Directory
+
+      The default directory is "upload-dir" in the work-directory
+
+    <init-param>
+      <param-name>upload-directory</param-name>
+      <param-value>WEB-INF/work/upload-dir</param-value>
+    </init-param>
+    -->
+
+    <!--
+      Causes all files in multipart requests to be saved to upload-dir.
+      Default is true for security reasons.
+      Unsupported values will be interpreted as false.
+    -->
+    <init-param>
+      <param-name>autosave-uploads</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!--
+      Specify handling of name conflicts when saving uploaded files to disk.
+      Acceptable values are deny, allow, rename (default). Files are renamed
+      x_filename where x is an integer value incremented to make the new
+      filename unique.
+    -->
+    <init-param>
+      <param-name>overwrite-uploads</param-name>
+      <param-value>rename</param-value>
+    </init-param>
+
+    <!--
+      Specify maximum allowed size of the upload. Defaults to 10 Mb.
+      Set here to a very low 100 kb to allow samples to run.
+    -->
+    <init-param>
+      <param-name>upload-max-size</param-name>
+      <param-value>102400</param-value>
+    </init-param>
+
+    <!--
+      This parameter allows to specify where Cocoon should create its page
+      and other objects cache. The path specified can be either absolute or
+      relative to the context path of the servlet. On windows platform,
+      absolute directory must start with volume: C:\Path\To\Cache\Directory
+
+      The default directory is "cache-dir" in the work-directory
+
+    <init-param>
+      <param-name>cache-directory</param-name>
+      <param-value>WEB-INF/work/cache-dir</param-value>
+    </init-param>
+    -->
+
+    <!--
+      This parameter allows to specify where Cocoon should put it's
+      working files. The path specified is either absolute or relative
+      to the context path of the Cocoon servlet. On windows platform,
+      absolute directory must start with volume: C:\Path\To\Work\Directory
+
+      The default directory is "cocoon-files" directory in the servlet
+      context's temp directory (context property javax.servlet.context.tempdir).
+
+    <init-param>
+      <param-name>work-directory</param-name>
+      <param-value>WEB-INF/work</param-value>
+    </init-param>
+    -->
+
+    <!--
+      This parameter allows to specify additional directories or jars
+      which Cocoon should put into it's own classpath.
+      Note that you must separate them using the platforms path.separator
+      (":" for *nix and ";" for Windows systems). Also note that absolute
+      pathes are taken as such but relative pathes are rooted at the context
+      root of the Cocoon servlet.
+
+    <init-param>
+      <param-name>extra-classpath</param-name>
+      <param-value>WEB-INF/extra-classes1:/[YOU-ABSOLUTE-PATH-TO]/own.jar</param-value>
+    </init-param>
+    -->
+
+    <!--
+      This parameter allows you to select the parent component manager.
+      The class will be instantiated via the constructor that takes a single
+      String as a parameter. That String will be equal to the text after the
+      '/'.
+
+      Cocoon honors the LogEnabled, Initializable and Disposable interfaces for
+      this class, if it implements them.
+
+      If you uncomment the following lines the parent CM is set to the Parent CM
+      sample, which will look up a configuration via JNDI at
+      org/apache/cocoon/samples/parentcm/ParentCMConfiguration and use it.
+    <init-param>
+      <param-name>parent-component-manager</param-name>
+      <param-value>org.apache.cocoon.samples.parentcm.ParentComponentManager/org/apache/cocoon/samples/parentcm/ParentCMConfiguration</param-value>
+    </init-param>
+    -->
+
+    <!--
+      If you set this parameter to 'true' or 'yes', Cocoon will add processing
+      time to the end of each response. Value 'hide' adds processing time as an
+      HTML comment. By default, processing time is not added (corresponds to
+      value 'no').
+      NOTE: If you use this feature, Cocoon might generated a wrong content
+      length header in the response. This is due to the internal processing
+      of Readers and the Caching. So, this might be the reason if you get
+      a warning about a wrong content length.
+      See http://issues.apache.org/bugzilla/show_bug.cgi?id=17370.
+    <init-param>
+      <param-name>show-time</param-name>
+      <param-value>hide</param-value>
+    </init-param>
+    -->
+
+    <!--
+      Whether or not the X-Cocoon-Version response header will be included.
+      This is true by default, but there may be some circumstances when it
+      is not desired (e.g. "information hiding" for added security, or if
+      using jsp:include with Cocoon-generated pages produces a "response is
+      already committed" error).
+    -->
+    <init-param>
+      <param-name>show-cocoon-version</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!--
+       If true or not set, this class will try to catch and handle all Cocoon
+       exceptions. If false, it will rethrow them to the servlet container.
+    -->
+    <init-param>
+      <param-name>manage-exceptions</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!--
+       If true, Avalon Excalibur instrumentation will be enabled on all
+       Instrumentable components with Cocoon and your Cocoon application.
+    -->
+    <init-param>
+      <param-name>enable-instrumentation</param-name>
+      <param-value>false</param-value>
+    </init-param>
+
+    <!--
+       This defines the location of the instrument manager configuration, only
+       used if the init-param enable-instrumentation is enabled.
+    -->
+    <init-param>
+      <param-name>instrumentation-config</param-name>
+      <param-value>/WEB-INF/instrumentation.xconf</param-value>
+    </init-param>
+
+    <!--
+      Set encoding used by the container. If not set the ISO-8859-1 encoding
+      will be assumed.
+      Since the servlet specification requires that the ISO-8859-1 encoding
+      is used (by default), you should never change this value unless
+      you have a buggy servlet container.
+    -->
+    <init-param>
+      <param-name>container-encoding</param-name>
+      <param-value>ISO-8859-1</param-value>
+    </init-param>
+
+    <!--
+      Set form encoding. This will be the character set used to decode request
+      parameters. If not set the ISO-8859-1 encoding will be assumed.
+    -->
+    <init-param>
+      <param-name>form-encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+
+    <!--
+      This parameter allows you to startup Cocoon2 immediately after startup
+      of your servlet engine.
+    -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+    <!-- Definition and configuration of Slide's WebDAV servlet. -->
+    <servlet>
+        <servlet-name>webdav</servlet-name>
+        <display-name>Slide DAV Server</display-name>
+        <servlet-class>org.apache.slide.webdav.WebdavServlet</servlet-class>
+        <init-param>
+            <param-name>domain</param-name>
+            <param-value>/WEB-INF/slide.xconf</param-value>
+            <description>
+                Path to the domain configuration file, relative to the path of the
+                web application.
+                The default is '/Domain.xml'.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>namespace</param-name>
+            <param-value>cocoon</param-value>
+            <description>
+                Name of the Slide namespace that should be accessed by this servlet.
+                If this parameter is provided, make sure the corresponding namespace
+                is defined in the domain configuration file. Otherwise, the default
+                namespace will be used, if one exists.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>scope</param-name>
+            <param-value/>
+            <description>
+                 Scope of the Slide namespace that should be exposed by this servlet.
+                 For example, if you want to expose only the /files collection via
+                 WebDAV, set this parameter to '/files'. In that case, any URLs of the
+                 form '/context-path/servlet-path/*' will be mapped to '/files/*'
+                 in the Slide namespace.
+                 The default value is an empty string.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>depth-limit</param-name>
+            <param-value>3</param-value>
+            <description>
+                 This init-parameter determines the depth limit for PROPFIND and other
+                 methods, to avoid performance hits on the server for requests with
+                 infinite depth.
+                 The default value is '3'.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>default-mime-type</param-name>
+            <param-value>application/octet-stream</param-value>
+            <description>
+                The MIME type that should be used for resources of unknown type. For
+                example, if a WebDAV client uploads a file (via PUT) without specifying
+                the Content-Type header, the MIME type defined here will be used.
+                The default value is 'application/octet-stream'.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>default-servlet</param-name>
+            <param-value>false</param-value>
+            <description>
+                By default, the WebDAV servlet is mapped as default servlet of the
+                web application context (the url-pattern in servlet-mapping is '/').
+                If you want to change that mapping so the servlet is no longer the
+                default servlet, you must change this initialization parameter to
+                indicate the situation to the servlet, by setting it to 'false'.
+                The default value is 'true'.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>directory-browsing</param-name>
+            <param-value>true</param-value>
+            <description>
+                 Use the 'directory-browsing' init-parameter to turn off generation of
+                 HTML index pages that enable browsing of collections (by setting this
+                 parameter to 'false'), or to specify a web-app relative path to a
+                 template resource (a JSP page, for example) which should handle
+                 generation of the HTML index page. In the latter case, you can use a
+                 JSP page at WEB-INF/index.jsp by specifying '/WEB-INF/index.jsp' as
+                 value of this parameter.
+                 The default value is 'true'.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>directory-browsing-hide-acl</param-name>
+            <param-value>true</param-value>
+            <description>
+                Use this parameter to hide ACL information in generated HTML index pages.
+                (see parameter "directory-browsing")
+                The default value is 'true'.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>directory-browsing-hide-locks</param-name>
+            <param-value>true</param-value>
+            <description>
+                Use this parameter to hide locking information in generated HTML index pages.
+                (see parameter "directory-browsing")
+                The default value is 'true'.
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>optimizePropfindOutput</param-name>
+            <param-value>true</param-value>
+            <description>
+                If set to false, the PropFindMethod will first create a (large) JDOM 
+                document in memory and then write it to the response stream. 
+                If set true, the PropFindMethod will write results to the stream as
+                soon as they are available. This will reduce memory consumption
+                in the case of large responses (PROPFIND on many resources).
+                The output of these two variants differ slightly, since in optimized 
+                mode the D:DAV namespace is declared in the multistatus element AND
+                in all response elements. Since this is still a valid XML document
+                it shouldn't be a problem, but in case you encounter any diffculties
+                this switch provides a way to get around it. 
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>extendedAllprop</param-name>
+            <param-value>false</param-value>
+            <description>
+            According to RFC3253 (DeltaV), RFCxxxx (ACL) and RFCxxxx (Binding),
+            a DAV:allprop PROPFIND should not return any of the properties defined
+            in any of that documents.
+            For testing purposes, the specified behaviour can be disabled by 
+            setting this parameter "true".
+            </description>
+        </init-param>
+        <init-param>
+            <param-name>lockdiscoveryIncludesPrincipalURL</param-name>
+            <param-value>true</param-value>
+            <description>
+                As proposed on February 08, 2003 by Lisa Dusseault in 
+                w3c-dist-auth-request@w3.org, the DAV:lockdiscovery property should 
+                include an element DAV:principal-URL with the semantics of the 
+                WebDAV/ACL specification. This feature can be switched-off in case 
+                of interoperability problems.
+            </description>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+        <!-- Uncomment this to get authentication -->
+        <!--security-role-ref>
+            <role-name>root</role-name>
+            <role-link>root</role-link>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>guest</role-name>
+            <role-link>guest</role-link>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>user</role-name>
+            <role-link>user</role-link>
+        </security-role-ref!-->
+    </servlet>
+
+  <!-- XMLDB Block, Xindice XML-RPC Server servlet configuration -->
+  <servlet>
+    <servlet-name>Xindice</servlet-name>
+    <display-name>Xindice XML-RPC Server</display-name>
+    <servlet-class>org.apache.xindice.server.XindiceServlet</servlet-class>
+
+    <!--
+      - This parameter should point to the Xindice Server configuration
+      - file. Relative paths resolved relative to webapp context root and
+      - must point to the resource within context. Absolute paths
+      - (starting with '/') loaded from the file system.
+      -->
+    <init-param>
+      <param-name>xindice.configuration</param-name>
+      <param-value>WEB-INF/xindice.xml</param-value>
+    </init-param>
+
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+
+
+
+  <!-- URL space mappings ============================================= -->
+
+  <!--
+    Cocoon handles all the URL space assigned to the webapp using its sitemap.
+    It is recommended to leave it unchanged. Under some circumstances though
+    (like integration with proprietary webapps or servlets) you might have
+    to change this parameter.
+  -->
+  <servlet-mapping>
+    <servlet-name>Cocoon</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  <!--
+    Some servlet engines (Tomcat) have defaults which are not overriden
+    by '/' mapping, but must be overriden explicitly.
+  -->
+  <servlet-mapping>
+    <servlet-name>Cocoon</servlet-name>
+    <url-pattern>*.jsp</url-pattern>
+  </servlet-mapping>
+  <!--
+    Some servlet engines (WebLogic) have defaults which are not overriden
+    by '/' mapping, but must be overriden explicitly.
+  -->
+  <servlet-mapping>
+    <servlet-name>Cocoon</servlet-name>
+    <url-pattern>*.html</url-pattern>
+  </servlet-mapping>
+
+    <!-- Mapping of Slide's WebDAV servlet. -->
+    <servlet-mapping>
+        <servlet-name>webdav</servlet-name>
+        <url-pattern>/webdav/*</url-pattern>
+    </servlet-mapping>
+
+  <!-- XMLDB Block, Xindice XML-RPC Server servlet mapping -->
+  <servlet-mapping>
+    <servlet-name>Xindice</servlet-name>
+    <url-pattern>/xindice/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Xindice</servlet-name>
+    <url-pattern>/xindice/</url-pattern>
+  </servlet-mapping>
+
+
+
+
+  <!-- various MIME type mappings ====================================== -->
+
+  <mime-mapping>
+    <extension>css</extension>
+    <mime-type>text/css</mime-type>
+  </mime-mapping>
+
+  <mime-mapping>
+    <extension>xml</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+
+  <mime-mapping>
+    <extension>xsl</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+
+  <mime-mapping>
+    <extension>xconf</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+
+  <mime-mapping>
+    <extension>xmap</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+
+  <mime-mapping>
+    <extension>ent</extension>
+    <mime-type>text/plain</mime-type>
+  </mime-mapping>
+
+  <mime-mapping>
+    <extension>grm</extension>
+    <mime-type>text/plain</mime-type>
+  </mime-mapping>
+
+    <!-- Authentication for the Slide WebDAV servlet -->
+    <!--
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>DAV resource</web-resource-name>
+            <url-pattern>/webdav/*</url-pattern>
+            <http-method>COPY</http-method>
+            <http-method>DELETE</http-method>
+            <http-method>GET</http-method>
+            <http-method>HEAD</http-method>
+            <http-method>LOCK</http-method>
+            <http-method>MKCOL</http-method>
+            <http-method>MOVE</http-method>
+            <http-method>OPTIONS</http-method>
+            <http-method>POST</http-method>
+            <http-method>PROPFIND</http-method>
+            <http-method>PROPPATCH</http-method>
+            <http-method>PUT</http-method>
+            <http-method>UNLOCK</http-method>
+            <http-method>VERSION-CONTROL</http-method>
+            <http-method>REPORT</http-method>
+            <http-method>CHECKIN</http-method>
+            <http-method>CHECKOUT</http-method>
+            <http-method>UNCHECKOUT</http-method>
+            <http-method>MKWORKSPACE</http-method>
+            <http-method>UPDATE</http-method>
+            <http-method>LABEL</http-method>
+            <http-method>MERGE</http-method>
+            <http-method>BASELINE-CONTROL</http-method>
+            <http-method>MKACTIVITY</http-method>
+            <http-method>ACL</http-method>
+            <http-method>SEARCH</http-method>
+            <http-method>BIND</http-method>
+            <http-method>UNBIND</http-method>
+            <http-method>REBIND</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>root</role-name>
+            <role-name>guest</role-name>
+            <role-name>user</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Slide DAV Server</realm-name>
+    </login-config>
+    <security-role>
+        <role-name>root</role-name>
+    </security-role>
+    <security-role>
+        <role-name>guest</role-name>
+    </security-role>
+    <security-role>
+        <role-name>user</role-name>
+    </security-role>
+    -->
+    
+
+
+</web-app>

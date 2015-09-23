@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0"> 
+		<sql:use-connection>mysqldb</sql:use-connection>
+		<sql:query>
+			select * from info
+		</sql:query>
+	</sql:execute-query>	
+</document> 

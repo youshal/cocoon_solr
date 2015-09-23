@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actors>
+  <actor>
+    <id>3</id>
+	<fullname>Hugh Laurie</fullname>
+	<birthday>11.06.1959</birthday>
+	<country>England</country>
+	<city>Oxford</city>
+	<alive>1</alive>
+	<filmscount>100</filmscount>
+	<genre>comedian</genre>
+  </actor>
+  <actor>
+    <id>4</id>
+	<fullname>Jim Carreyy</fullname>
+	<birthday>17.01.1962</birthday>
+	<country>Canada</country>
+	<city>Ontario</city>
+	<alive>1</alive>
+	<filmscount>60</filmscount>
+	<genre>surreal comedian</genre>
+  </actor>
+  
+</actors>
