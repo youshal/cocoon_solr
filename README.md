@@ -1,7 +1,7 @@
 # Test task to learn about cocoon
 # All configuration actions performed in windows environment and one host is used.
 
-1. Configuring Cocoon
+## Configuring Cocoon
   cocoon folder contains files to place in cocoon web application folder,
   which is built with default settings from cocoon-2.1.12 sources. 
   Just copy all content of cocoon folder except of cocoon.xconf and web.xml into built folder of coocon webapp, 
@@ -13,7 +13,7 @@
   jakarta-tomcat-4.0.1\webapps\webapp\WEB-INF\lib
 
   
-2. Configuring Solr
+## Configuring Solr
   solr folder contains settings for performing indexing of test documents and libs to enable cross-domain POST requests.
   Default techproducts core of solr used for test purposes. Download solr 5.3.0 and perform setup. Use http://lucene.apache.org/solr/quickstart.html 
   as reference. After that replace schema.xml in
@@ -22,7 +22,7 @@
   
   To run solr use bin/solr start -e techproducts command.
 
-3. Database
+## Database
    Mysql 5.6.17 used as DB. Create "info" table in the "actors" database. In the "info" table create columns:
   id        int 
 	fullname  text
@@ -35,7 +35,7 @@
 	Create several rows in the "info" with appropriate information.
 	Default mysql login and password (root and empty password) are using in the settings of db connection of cocoon.
   
-4. How to use
+## How to use
   Run mysql.
   Run apache tomcat \jakarta-tomcat-4.0.1\bin\startup.bat and solr with bin/solr start -e techproducts. 
   Test Cocoon web app will be available by this link localhost:8080/webapp/build.
